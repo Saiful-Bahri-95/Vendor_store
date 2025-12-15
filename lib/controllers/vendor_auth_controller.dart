@@ -1,0 +1,86 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:vendor_store/global_variable.dart';
+import 'package:vendor_store/models/vendor.dart';
+import 'package:http/http.dart' as http;
+import 'package:vendor_store/services/manage_http_respons.dart';
+import 'package:vendor_store/views/screens/main_vendor_screen.dart';
+
+class VendorAuthController {
+  Future<void> signUpVendor({
+    required String fullname,
+    required String email,
+    required String password,
+    required context,
+  }) async {
+    // Implementation for vendor sign-up
+    try {
+      Vendor vendor = Vendor(
+        id: '',
+        fullname: fullname,
+        email: email,
+        state: '',
+        city: '',
+        locality: '',
+        role: '',
+        password: password,
+      );
+
+      http.Response response = await http.post(
+        Uri.parse('$uri/api/vendor/signup'),
+        body: vendor.toJson(),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      // Handle the response as needed
+      manageHttpResponse(
+        response: response,
+        context: context,
+        onSuccess: () {
+          showSnackbar(context, 'Account created successfully');
+        },
+      );
+    } catch (e) {
+      showSnackbar(context, e.toString());
+    }
+  }
+
+  //function to login vendor
+  Future<void> signInVendor({
+    required String email,
+    required String password,
+    required context,
+  }) async {
+    try {
+      http.Response response = await http.post(
+        Uri.parse('$uri/api/vendor/signin'),
+        body: jsonEncode({'email': email, 'password': password}),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      manageHttpResponse(
+        response: response,
+        context: context,
+        onSuccess: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return MainVendorScreen();
+              },
+            ),
+            (route) => false,
+          );
+          showSnackbar(context, 'Login successful');
+        },
+      );
+    } catch (e) {
+      showSnackbar(context, e.toString());
+    }
+  }
+}

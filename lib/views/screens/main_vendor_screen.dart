@@ -14,7 +14,7 @@ class MainVendorScreen extends StatefulWidget {
 }
 
 class _MainVendorScreenState extends State<MainVendorScreen> {
-  int _pageIndex = 0;
+  int _pageIndex = 1;
 
   List<Widget> pages = [
     EarningScreen(),
